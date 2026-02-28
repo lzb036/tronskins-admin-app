@@ -29,20 +29,16 @@
           <text class="value mono">{{ tokenPreview }}</text>
         </view>
         <view class="row">
+          <text class="label">Refresh Token</text>
+          <text class="value mono">{{ refreshTokenText }}</text>
+        </view>
+        <view class="row">
           <text class="label">Access过期时间</text>
           <text class="value">{{ accessExpireAtText }}</text>
         </view>
         <view class="row">
           <text class="label">Access剩余时长</text>
           <text class="value">{{ accessTtlText }}</text>
-        </view>
-        <view class="row">
-          <text class="label">Refresh过期时间</text>
-          <text class="value">{{ refreshExpireAtText }}</text>
-        </view>
-        <view class="row">
-          <text class="label">Refresh剩余时长</text>
-          <text class="value">{{ refreshTtlText }}</text>
         </view>
         <view class="row">
           <text class="label">最近刷新</text>
@@ -68,7 +64,7 @@
             设为已过期
           </u-button>
           <u-button size="mini" :loading="running === '设置未来过期时间'" :custom-style="actionButtonStyle" @click="handleSetFutureExpire">
-            设为10分钟后过期
+            设为1分钟后过期
           </u-button>
           <u-button size="mini" :loading="running === '写入无效Token'" :custom-style="actionButtonStyle" @click="handleSetInvalidToken">
             写入无效 Token
@@ -109,7 +105,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onHide, onShow } from '@dcloudio/uni-app'
 import { useAppStore } from '@/store/app'
 import { useUserStore } from '@/store/user'
 import AuthAPI from '@/api/modules/auth'
@@ -152,6 +149,8 @@ const running = ref('')
 const logs = ref<DebugLog[]>([])
 const logId = ref(0)
 const originalToken = ref('')
+const nowTick = ref(Date.now())
+let ttlTimer: ReturnType<typeof setInterval> | null = null
 
 const snapshot = ref<AuthSnapshot>({
   loggedIn: false,
@@ -193,6 +192,11 @@ const tokenPreview = computed(() => {
   return `${token.slice(0, 14)}...${token.slice(-10)}`
 })
 
+const refreshTokenText = computed(() => {
+  if (!snapshot.value.loggedIn) return '(空)'
+  return 'HttpOnly Cookie（前端不可读）'
+})
+
 function pad2(value: number): string {
   return String(value).padStart(2, '0')
 }
@@ -211,7 +215,7 @@ function formatDateTime(value: number | Date): string {
 
 function formatDuration(expireTime: number | null): string {
   if (!expireTime) return '未知'
-  const diff = expireTime - Date.now()
+  const diff = expireTime - nowTick.value
   if (diff <= 0) return '0天00时00分00秒'
   const totalSeconds = Math.floor(diff / 1000)
   const days = Math.floor(totalSeconds / 86400)
@@ -229,17 +233,6 @@ const accessExpireAtText = computed(() => {
 
 const accessTtlText = computed(() => {
   return formatDuration(snapshot.value.accessTokenExpireTime)
-})
-
-const refreshExpireAtText = computed(() => {
-  const expireTime = snapshot.value.refreshTokenExpireTime
-  if (!expireTime) return '未知（服务端未返回）'
-  return formatDateTime(expireTime)
-})
-
-const refreshTtlText = computed(() => {
-  if (!snapshot.value.refreshTokenExpireTime) return '未知（服务端未返回）'
-  return formatDuration(snapshot.value.refreshTokenExpireTime)
 })
 
 function getTokenFromStorage(): string {
@@ -292,6 +285,7 @@ function appendLog(level: LogLevel, text: string): void {
 }
 
 function updateSnapshot(): void {
+  nowTick.value = Date.now()
   snapshot.value = {
     loggedIn: userStore.isLoggedIn(),
     token: getTokenFromStorage(),
@@ -403,10 +397,10 @@ async function handleSetFutureExpire(): Promise<void> {
     }
     userStore.setAccessToken({
       accessToken: currentToken,
-      accessTokenExpireTime: Date.now() + 10 * 60 * 1000,
+      accessTokenExpireTime: Date.now() + 1 * 60 * 1000,
       header: getAuthHeaderFromStorage()
     })
-    appendLog('success', '已将 access token 标记为 10 分钟后过期')
+    appendLog('success', '已将 access token 标记为 1 分钟后过期')
   })
 }
 
@@ -486,10 +480,37 @@ function clearLogs(): void {
   logs.value = []
 }
 
+function startTtlTimer(): void {
+  if (ttlTimer) return
+  ttlTimer = setInterval(() => {
+    nowTick.value = Date.now()
+  }, 1000)
+}
+
+function stopTtlTimer(): void {
+  if (!ttlTimer) return
+  clearInterval(ttlTimer)
+  ttlTimer = null
+}
+
 onMounted(() => {
   updateSnapshot()
   originalToken.value = getTokenFromStorage()
+  startTtlTimer()
   appendLog('info', '认证调试页已就绪')
+})
+
+onShow(() => {
+  updateSnapshot()
+  startTtlTimer()
+})
+
+onHide(() => {
+  stopTtlTimer()
+})
+
+onUnmounted(() => {
+  stopTtlTimer()
 })
 </script>
 

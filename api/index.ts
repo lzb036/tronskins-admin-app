@@ -177,39 +177,71 @@ function isAccessTokenExpired(): boolean {
 function requestRefreshByEndpoint(endpoint: string): Promise<boolean> {
   return new Promise((resolve) => {
     const baseURL = getCurrentBaseURL()
+    const refreshUrl = `${baseURL}${endpoint}`
+    console.log('[AuthRefresh] start', {
+      endpoint,
+      url: refreshUrl
+    })
 
     const header: Record<string, string> = {
       'Content-Type': 'application/json'
     }
 
     uni.request({
-      url: `${baseURL}${endpoint}`,
+      url: refreshUrl,
       method: 'POST',
       data: JSON.stringify({}),
       header,
       withCredentials: true,
       success: (res: UniApp.RequestSuccess) => {
+        console.log('[AuthRefresh] response', {
+          endpoint,
+          statusCode: res.statusCode
+        })
         if (res.statusCode < 200 || res.statusCode >= 300) {
+          console.warn('[AuthRefresh] http status not success', {
+            endpoint,
+            statusCode: res.statusCode,
+            data: res.data
+          })
           resolve(false)
           return
         }
 
         const data = res.data
         if (isRecord(data) && typeof data.code !== 'undefined' && data.code !== 0 && data.code !== 200) {
+          console.warn('[AuthRefresh] business code not success', {
+            endpoint,
+            code: data.code,
+            data
+          })
           resolve(false)
           return
         }
 
         const tokenPayload = extractTokenPayload(data)
         if (!tokenPayload) {
+          console.warn('[AuthRefresh] missing token payload in refresh response', {
+            endpoint,
+            data
+          })
           resolve(false)
           return
         }
 
         updateAccessToken(tokenPayload)
+        console.log('[AuthRefresh] success', {
+          endpoint,
+          accessTokenExpireTime: tokenPayload.accessTokenExpireTime ?? null,
+          refreshTokenExpireTime: tokenPayload.refreshTokenExpireTime ?? null
+        })
         resolve(true)
       },
-      fail: () => {
+      fail: (err: UniApp.RequestFail) => {
+        console.error('[AuthRefresh] request fail', {
+          endpoint,
+          error: err
+        })
         resolve(false)
       }
     })
