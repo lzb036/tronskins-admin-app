@@ -199,7 +199,6 @@ const handleLogout = async (): Promise<void> => {
   }
 
   userStore.logout()
-  appStore.resetListTabInitialized()
 
   redirectToLogin()
 }
