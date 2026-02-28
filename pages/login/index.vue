@@ -216,6 +216,7 @@ const handleLogin = async (): Promise<void> => {
       refreshTokenExpireTime: response.refreshTokenExpireTime ?? null,
       header: response.header
     })
+    appStore.resetListTabInitialized()
     console.log('[登录] access token已存储:', accessToken)
 
     try {

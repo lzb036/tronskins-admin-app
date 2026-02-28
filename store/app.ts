@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 
 export type ThemeMode = 'light' | 'dark'
 export type LanguageMode = 'zh-CN' | 'en-US'
+export type ListTabKey = 'trade' | 'withdraw' | 'ticket'
 
 // 类型守卫函数
 function isThemeMode(value: unknown): value is ThemeMode {
@@ -16,6 +17,12 @@ function isLanguageMode(value: unknown): value is LanguageMode {
 export const useAppStore = defineStore('app', () => {
   const theme = ref<ThemeMode>('light')
   const language = ref<LanguageMode>('zh-CN')
+  const listTabInitialized = ref<Record<ListTabKey, boolean>>({
+    trade: false,
+    withdraw: false,
+    ticket: false
+  })
+  const listTabCache = ref<Partial<Record<ListTabKey, unknown>>>({})
 
   const setTheme = (newTheme: ThemeMode): void => {
     theme.value = newTheme
@@ -51,6 +58,38 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
+  const hasListTabInitialized = (tab: ListTabKey): boolean => {
+    return !!listTabInitialized.value[tab]
+  }
+
+  const markListTabInitialized = (tab: ListTabKey): void => {
+    listTabInitialized.value[tab] = true
+  }
+
+  const resetListTabInitialized = (tab?: ListTabKey): void => {
+    if (tab) {
+      listTabInitialized.value[tab] = false
+      delete listTabCache.value[tab]
+      return
+    }
+    listTabInitialized.value = {
+      trade: false,
+      withdraw: false,
+      ticket: false
+    }
+    listTabCache.value = {}
+  }
+
+  const setListTabCache = <T>(tab: ListTabKey, payload: T): void => {
+    listTabCache.value[tab] = payload
+  }
+
+  const getListTabCache = <T>(tab: ListTabKey): T | null => {
+    const cache = listTabCache.value[tab]
+    if (typeof cache === 'undefined') return null
+    return cache as T
+  }
+
   watch(theme, (newTheme: ThemeMode) => {
     try {
       uni.setStorageSync('app_theme', newTheme)
@@ -70,11 +109,18 @@ export const useAppStore = defineStore('app', () => {
   return {
     theme,
     language,
+    listTabInitialized,
+    listTabCache,
     setTheme,
     setLanguage,
     toggleTheme,
     toggleLanguage,
-    initTheme
+    initTheme,
+    hasListTabInitialized,
+    markListTabInitialized,
+    resetListTabInitialized,
+    setListTabCache,
+    getListTabCache
   }
 })
 

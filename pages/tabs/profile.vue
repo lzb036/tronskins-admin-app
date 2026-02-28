@@ -106,12 +106,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store/app'
 import { useUserStore } from '@/store/user'
 import { redirectToLogin } from '@/utils/navigation'
 import AuthAPI from '@/api/modules/auth'
+import UserAPI from '@/api/modules/user'
 
 const { t, locale } = useI18n()
 const appStore = useAppStore()
@@ -140,10 +142,30 @@ const buttonStyle = computed(() => ({
   border: 'none'
 }))
 
-onMounted(() => {
+const fetchUserInfo = async (): Promise<void> => {
+  try {
+    const userInfoResponse = await UserAPI.getUserInfo()
+    userStore.setUserInfo({
+      id: userInfoResponse.id,
+      username: userInfoResponse.username,
+      nickname: userInfoResponse.nickname,
+      realName: userInfoResponse.realname,
+      realname: userInfoResponse.realname,
+      email: userInfoResponse.email,
+      roles: userInfoResponse.roles,
+      accountLocked: userInfoResponse.accountLocked
+    })
+  } catch (error) {
+    console.error('[个人中心] 获取用户信息失败', error)
+  }
+}
+
+onShow(() => {
   if (!userStore.isLoggedIn()) {
     redirectToLogin()
+    return
   }
+  fetchUserInfo()
 })
 
 const handleThemeToggle = (): void => {
@@ -177,6 +199,7 @@ const handleLogout = async (): Promise<void> => {
   }
 
   userStore.logout()
+  appStore.resetListTabInitialized()
 
   redirectToLogin()
 }

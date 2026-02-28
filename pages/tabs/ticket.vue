@@ -153,13 +153,17 @@ const scrollContentStyle = computed(() => ({
   marginTop: `calc(120rpx + ${statusBarHeight}px)`
 }))
 
+function createDefaultPager(): Pager {
+  return {
+    total: 0,
+    rp: 10,
+    current: 1,
+    pages: 0
+  }
+}
+
 const records = ref<TicketRecord[]>([])
-const pager = ref<Pager>({
-  total: 0,
-  rp: 10,
-  current: 1,
-  pages: 0
-})
+const pager = ref<Pager>(createDefaultPager())
 const loading = ref(false)
 const loadMoreLoading = ref(false)
 const scrollTop = ref(0)

@@ -158,16 +158,20 @@ const scrollContentStyle = computed(() => ({
   marginTop: `calc(120rpx + ${statusBarHeight}px)`
 }))
 
+function createDefaultPager(): Pager {
+  return {
+    total: 0,
+    rp: 10,
+    current: 1,
+    pages: 0
+  }
+}
+
 // 搜索面板高度（动态计算）
 const searchPanelHeight = ref(0)
 
 const records = ref<WithdrawRecord[]>([])
-const pager = ref<Pager>({
-  total: 0,
-  rp: 10,
-  current: 1,
-  pages: 0
-})
+const pager = ref<Pager>(createDefaultPager())
 const loading = ref(false)
 
 // 查询状态

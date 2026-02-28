@@ -404,13 +404,17 @@ const scrollContentStyle = computed(() => ({
   marginTop: `calc(220rpx + ${statusBarHeight}px)`
 }))
 
+function createDefaultPager(): Pager {
+  return {
+    total: 0,
+    rp: 10,
+    current: 1,
+    pages: 0
+  }
+}
+
 const records = ref<TradeRecord[]>([])
-const pager = ref<Pager>({
-  total: 0,
-  rp: 10,
-  current: 1,
-  pages: 0
-})
+const pager = ref<Pager>(createDefaultPager())
 const loading = ref(false)
 
 // Tab 相关
@@ -451,12 +455,7 @@ const hasFilter = computed(() => {
 
 // Tab2 相关状态
 const selfRecords = ref<TradeRecord[]>([])
-const selfPager = ref<Pager>({
-  total: 0,
-  rp: 10,
-  current: 1,
-  pages: 0
-})
+const selfPager = ref<Pager>(createDefaultPager())
 const loading2 = ref(false)
 const loadMoreLoading2 = ref(false)
 
