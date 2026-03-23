@@ -413,6 +413,26 @@ function createDefaultPager(): Pager {
   }
 }
 
+type PagerRef = {
+  value: Pager | undefined
+}
+
+function resetPagerState(targetPager: PagerRef): void {
+  targetPager.value = createDefaultPager()
+}
+
+function syncPagerState(targetPager: PagerRef, responsePager?: Pager): void {
+  if (responsePager) {
+    targetPager.value = responsePager
+    return
+  }
+
+  targetPager.value = {
+    ...createDefaultPager(),
+    current: targetPager.value?.current ?? 1
+  }
+}
+
 const records = ref<TradeRecord[]>([])
 const pager = ref<Pager>(createDefaultPager())
 const loading = ref(false)
@@ -635,13 +655,14 @@ const loadList = async (): Promise<void> => {
     }
 
     const response = await TradeAPI.getList(params)
+    const list = response?.list ?? []
 
     if (pager.value.current === 1) {
-      records.value = response.list
+      records.value = list
     } else {
-      records.value = [...records.value, ...response.list]
+      records.value = [...records.value, ...list]
     }
-    pager.value = response.pager
+    syncPagerState(pager, response?.pager)
 
     if (shouldRestoreScroll) {
       await nextTick()
@@ -681,7 +702,7 @@ const onScrollLower = (): void => {
 
 const handleSearch = (): void => {
   showFilterPanel.value = false
-  pager.value.current = 1
+  resetPagerState(pager)
   loadList()
 }
 
@@ -691,7 +712,7 @@ const handleReset = (): void => {
   searchForm.value.status = undefined
   searchForm.value.appId = undefined
   searchForm.value.type = undefined
-  pager.value.current = 1
+  resetPagerState(pager)
   loadList()
 }
 
@@ -723,13 +744,14 @@ const loadSelfList = async (): Promise<void> => {
     }
 
     const response = await TradeAPI.getSelfList(params)
+    const list = response?.list ?? []
 
     if (selfPager.value.current === 1) {
-      selfRecords.value = response.list
+      selfRecords.value = list
     } else {
-      selfRecords.value = [...selfRecords.value, ...response.list]
+      selfRecords.value = [...selfRecords.value, ...list]
     }
-    selfPager.value = response.pager
+    syncPagerState(selfPager, response?.pager)
 
     if (shouldRestoreScroll) {
       await nextTick()
@@ -757,7 +779,7 @@ const onScrollLower2 = (): void => {
 // Tab2 查询
 const handleSearch2 = (): void => {
   showFilterPanel2.value = false
-  selfPager.value.current = 1
+  resetPagerState(selfPager)
   loadSelfList()
 }
 
@@ -767,7 +789,7 @@ const handleReset2 = (): void => {
   searchForm2.value.orderNo = ''
   searchForm2.value.status = undefined
   searchForm2.value.appId = undefined
-  selfPager.value.current = 1
+  resetPagerState(selfPager)
   loadSelfList()
 }
 
@@ -775,7 +797,7 @@ const handleReset2 = (): void => {
 const handleRefresh = (): void => {
   if (currentTab.value === 0) {
     // Tab1: 刷新交易列表
-    pager.value.current = 1
+    resetPagerState(pager)
     loadList()
     uni.showToast({
       title: t('trade.refreshSuccess'),
@@ -783,7 +805,7 @@ const handleRefresh = (): void => {
     })
   } else {
     // Tab2: 刷新自营交易列表
-    selfPager.value.current = 1
+    resetPagerState(selfPager)
     loadSelfList()
     uni.showToast({
       title: t('trade.refreshSuccess'),
