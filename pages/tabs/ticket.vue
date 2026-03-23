@@ -465,7 +465,8 @@ const formatTime = (timestamp: string): string => {
 }
 
 .content {
-  padding: 40rpx 24rpx 200rpx 24rpx;
+  padding: 40rpx 24rpx calc(96rpx + constant(safe-area-inset-bottom)) 24rpx;
+  padding: 40rpx 24rpx calc(96rpx + env(safe-area-inset-bottom)) 24rpx;
 }
 
 .search-card {
@@ -762,7 +763,7 @@ const formatTime = (timestamp: string): string => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30rpx 0;
+  padding: 18rpx 0 8rpx;
   gap: 12rpx;
 }
 

@@ -986,7 +986,8 @@ const copyOrderId = (orderId: string): void => {
 
 .content {
   padding: 24rpx;
-  padding-bottom: 200rpx;
+  padding-bottom: calc(96rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(96rpx + env(safe-area-inset-bottom));
 }
 
 .search-card {
@@ -1518,7 +1519,7 @@ const copyOrderId = (orderId: string): void => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30rpx 0;
+  padding: 18rpx 0 8rpx;
   gap: 12rpx;
 }
 

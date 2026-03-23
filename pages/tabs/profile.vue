@@ -207,6 +207,7 @@ const handleLogout = async (): Promise<void> => {
 <style scoped>
 .profile-container {
   min-height: 100vh;
+  box-sizing: border-box;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -317,29 +318,34 @@ const handleLogout = async (): Promise<void> => {
 
 .content {
   flex: 1;
+  min-height: 0;
   position: relative;
   z-index: 2;
-  padding: 40rpx;
-  padding-bottom: 200rpx;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 32rpx 40rpx;
+  padding-bottom: calc(32rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 }
 
 .user-card {
   background-color: var(--c-card);
   backdrop-filter: blur(16rpx);
   border-radius: 24rpx;
-  padding: 48rpx 40rpx;
+  padding: 44rpx 40rpx;
   border: 2rpx solid var(--c-border);
   box-shadow: 0 8rpx 32rpx var(--c-shadow);
-  margin-bottom: 32rpx;
+  margin-bottom: 24rpx;
 }
 
 .user-header {
   display: flex;
   align-items: center;
   gap: 24rpx;
-  padding-bottom: 32rpx;
+  padding-bottom: 24rpx;
   border-bottom: 2rpx solid var(--c-border);
-  margin-bottom: 32rpx;
+  margin-bottom: 24rpx;
 }
 
 .avatar-wrapper {
@@ -390,13 +396,13 @@ const handleLogout = async (): Promise<void> => {
 .info-sections {
   display: flex;
   flex-direction: column;
-  gap: 32rpx;
+  gap: 24rpx;
 }
 
 .info-section {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
 .section-title {
@@ -409,14 +415,14 @@ const handleLogout = async (): Promise<void> => {
 .info-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20rpx 24rpx;
+  padding: 18rpx 24rpx;
   background-color: var(--c-bg);
   border-radius: 16rpx;
   border: 2rpx solid var(--c-border);
@@ -475,6 +481,8 @@ const handleLogout = async (): Promise<void> => {
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 ::v-deep .theme-modal .u-popup__content {

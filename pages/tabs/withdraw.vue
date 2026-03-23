@@ -442,7 +442,8 @@ const openLink = (url: string): void => {
 }
 
 .content {
-  padding: 40rpx 24rpx 200rpx 24rpx;
+  padding: 40rpx 24rpx calc(96rpx + constant(safe-area-inset-bottom)) 24rpx;
+  padding: 40rpx 24rpx calc(96rpx + env(safe-area-inset-bottom)) 24rpx;
 }
 
 /* 搜索卡片 */
@@ -784,7 +785,7 @@ const openLink = (url: string): void => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30rpx 0;
+  padding: 18rpx 0 8rpx;
   gap: 12rpx;
 }
 
