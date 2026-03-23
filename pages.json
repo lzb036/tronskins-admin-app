@@ -7,28 +7,7 @@
 	},
 	"pages": [
 		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/baseurl/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/auth-debug/index",
+			"path": "pages/tabs/trade",
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
@@ -36,13 +15,6 @@
 		},
 		{
 			"path": "pages/tabs/withdraw",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/tabs/trade",
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
@@ -57,6 +29,34 @@
 		},
 		{
 			"path": "pages/tabs/profile",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/baseurl/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/auth-debug/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
@@ -98,6 +98,38 @@
 			}
 		}
 	],
+	"tabBar": {
+		"color": "#8B93A6",
+		"selectedColor": "#4F46E5",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/tabs/trade",
+				"text": "交易",
+				"iconPath": "static/tabbar/trade.png",
+				"selectedIconPath": "static/tabbar/trade-active.png"
+			},
+			{
+				"pagePath": "pages/tabs/withdraw",
+				"text": "提现",
+				"iconPath": "static/tabbar/withdraw.png",
+				"selectedIconPath": "static/tabbar/withdraw-active.png"
+			},
+			{
+				"pagePath": "pages/tabs/ticket",
+				"text": "工单",
+				"iconPath": "static/tabbar/ticket.png",
+				"selectedIconPath": "static/tabbar/ticket-active.png"
+			},
+			{
+				"pagePath": "pages/tabs/profile",
+				"text": "我的",
+				"iconPath": "static/tabbar/profile.png",
+				"selectedIconPath": "static/tabbar/profile-active.png"
+			}
+		]
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

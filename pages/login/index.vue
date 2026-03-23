@@ -76,6 +76,7 @@ import { useUserStore } from '@/store/user'
 import { useI18n } from 'vue-i18n'
 import AuthAPI from '@/api/modules/auth'
 import UserAPI from '@/api/modules/user'
+import { redirectToHomeTab } from '@/utils/navigation'
 
 interface LoginFormData {
   username: string
@@ -246,9 +247,7 @@ const handleLogin = async (): Promise<void> => {
     })
 
     setTimeout(() => {
-      uni.reLaunch({
-        url: '/pages/index/index'
-      })
+      redirectToHomeTab()
     }, 1000)
   } catch (error) {
     console.error('[登录] 登录失败，错误:', error)

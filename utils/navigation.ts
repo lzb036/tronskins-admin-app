@@ -1,6 +1,7 @@
 let isLoginRedirecting = false
 
 const LOGIN_ROUTE = '/pages/login/index'
+export const HOME_TAB_ROUTE = '/pages/tabs/trade'
 
 export const redirectToLogin = (): void => {
   if (isLoginRedirecting) return
@@ -17,5 +18,11 @@ export const redirectToLogin = (): void => {
     complete: () => {
       isLoginRedirecting = false
     }
+  })
+}
+
+export const redirectToHomeTab = (): void => {
+  uni.reLaunch({
+    url: HOME_TAB_ROUTE
   })
 }

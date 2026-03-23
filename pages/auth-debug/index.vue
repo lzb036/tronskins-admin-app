@@ -111,6 +111,7 @@ import { useAppStore } from '@/store/app'
 import { useUserStore } from '@/store/user'
 import AuthAPI from '@/api/modules/auth'
 import UserAPI from '@/api/modules/user'
+import { redirectToHomeTab } from '@/utils/navigation'
 
 type LogLevel = 'info' | 'success' | 'error'
 
@@ -321,9 +322,7 @@ function handleBack(): void {
   uni.navigateBack({
     delta: 1,
     fail: () => {
-      uni.reLaunch({
-        url: '/pages/index/index'
-      })
+      redirectToHomeTab()
     }
   })
 }
